@@ -1,6 +1,8 @@
 /*
 chroma.js - JavaScript library for color conversions
 
+API Documentation: https://gka.github.io/chroma.js/
+
 Copyright (c) 2011-2017, Gregor Aisch
 All rights reserved.
 
