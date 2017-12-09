@@ -19,14 +19,73 @@
 				color:#0078ff;
 			}
 
-			#info {
+			/*#info {
 				color: #ffffff;
 				position: absolute;
 				top: 10px;
 				width: 100%;
+			}*/
+
+			#buckets {
+				margin: auto;
+				width: 100%;
+				background-color: #000000;
+				position: absolute;
+				z-index: 1;
+			}
+
+			#controls {
+				right: 0px;
+				top: 10px;
+				background-color: #000000;
+				position: absolute;
+				z-index: 2;
+			}
+
+			#red, #green, #blue {
+				width: 100px;
+				height: 100px;
+			}
+
+			#red, #green {
+				margin-right: 20px;
+			}
+
+			#reset, #submit {
+				width: 75px;
+				margin-right: 10px
+			}
+
+			#reset {
+				margin-bottom: 10px;
+			}
+
+			#goal-text {
+				position: absolute;
+				right: 25px;
+				bottom: 110px;
+				color: white;
+				z-index: 3;
+			}
+
+			#goal-color {
+				width: 100px;
+				height: 100px;
+				background: red;
+				position: absolute;
+				right: 10px;
+				bottom: 10px;
+				border-radius: 20px;
+				z-index: 3;
+			}
+
+			canvas {
+				position: relative;
+				z-index: 0;
 			}
 
 		</style>
+		<link rel="stylesheet" href="../css/bootstrap.min.css">
 	</head>
 	<body>
 
@@ -37,11 +96,29 @@
 			Press mouse button to orbit around. 'W' key toggles wireframe.
 		</div> -->
 
+		<div id="buckets">
+			<img src="../../images/paintbucket-red.png" alt="Red" id="red">
+			<img src="../../images/paintbucket-green.png" alt="Green" id="green">
+			<img src="../../images/paintbucket-blue.png" alt="Blue" id="blue">
+		</div>
+
+		<div id="controls">
+			<a href="#" class="btn btn-default" id="reset">Reset</a>
+			<br />
+			<a href="#" class="btn btn-primary" id="submit">Submit</a>
+		</div>
+
+		<div id="goal-text">
+			Goal Color:
+		</div>
+		<div id="goal-color" />
+
 		<script src="../build/three.js"></script>
 		<script src="../js/Detector.js"></script>
 		<script src="../js/libs/stats.min.js"></script>
 		<script src="../js/libs/dat.gui.min.js"></script>
 		<script src="../js/SimplexNoise.js"></script>
+		<script type="text/javascript" src="./Common/chroma_min.js"></script>
 
 		<script src="../js/GPUComputationRenderer.js"></script>
 

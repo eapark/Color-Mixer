@@ -3736,12 +3736,14 @@
 				if ( image instanceof HTMLCanvasElement ) {
 
 					canvas = image;
+					console.log("here");
+					canvas.height = image.height-300;
 
 				} else {
-
+					console.log("else");
 					canvas = document.createElementNS( 'http://www.w3.org/1999/xhtml', 'canvas' );
 					canvas.width = image.width;
-					canvas.height = image.height;
+					canvas.height = image.height-300;
 
 					var context = canvas.getContext( '2d' );
 
