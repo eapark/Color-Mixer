@@ -1,10 +1,7 @@
 "use strict";
 
-var gl;
-var canvas;
 var answerColor;
-var userColor = chroma([0, 0, 0]);
-var firstPress = false;
+var userColor = chroma([255, 255, 255]);
 var gameOver = false;
 var increment = 0.05;
 
@@ -12,31 +9,22 @@ var paintRed = chroma([255, 0, 0]);
 var paintBlue = chroma([0, 0, 255]);
 var paintYellow = chroma([255, 255, 0]);
 
+var scene = new THREE.Scene();
+
+var paintdropArray = [];
+var buttonPressTimeArray = [];
+
+var addedPaint;
+
 window.onload = function init()
 {
-    canvas = document.getElementById( "gl-canvas" );
-
-    gl = WebGLUtils.setupWebGL( canvas );
-    if ( !gl ) { alert( "WebGL isn't available" ); }
-    
-    //
-    //  Configure WebGL
-    //
-    gl.viewport( 0, 0, canvas.width, canvas.height );
-    gl.clearColor( 0.85, 0.85, 0.85, 1.0 );
-    
-    gl.enable(gl.DEPTH_TEST);
-
     // Set answerColor to be a random color
     answerColor = chroma.random();
 
     // HTML button event listeners
-    document.getElementById( "addA" ).onclick = function() { mixColor( paintRed ); };
-    document.getElementById( "addB" ).onclick = function() { mixColor( paintYellow ); };
-    document.getElementById( "addC" ).onclick = function() { mixColor( paintBlue ); };
-
-    render();
-    
+    document.getElementById( "red" ).onclick = function() { addPaintdrop( paintRed ); };
+    document.getElementById( "green" ).onclick = function() { addPaintdrop( paintYellow ); };
+    document.getElementById( "blue" ).onclick = function() { addPaintdrop( paintBlue ); };    
 };
 
 // Return a score out of 100
@@ -50,21 +38,54 @@ function resetColor() {
     // Make water clear
 }
 
-// Mix color
-function mixColor(paint) {
-    // Generate a ball of color 'paint' and let it fall
+// Add paint drop
+function addPaintdrop(paint) {
+    addedPaint = paint;
 
-    // Update userColor
-    if (firstPress) {
-        userColor = paint;
-        firstPress = false;
-        return;
-    }
-    userColor = chroma.mix( userColor, paint, 'lab' );
+    // Generate a ball representing paint drop of color 'paint' and let it fall
+    var ballGeometry = new THREE.SphereGeometry(50, 30, 30);
+    var ballMaterial = new THREE.MeshPhongMaterial();
+    ballMaterial.color = new THREE.Color( chromaToHex(paint) );
+
+    var sphere = new THREE.Mesh( ballGeometry, ballMaterial );
+    scene.add( sphere );
+    sphere.position.set(0, 100, 0);
+    paintdropArray.push( sphere );
+    buttonPressTimeArray.push( Date.now() );
 }
 
-var render = function() {
-    gl.clear( gl.COLOR_BUFFER_BIT );
+function updatePaintdropHeight( waterMaterial, uniforms ) {
+    var gravity = 0.2;
+    for(var p = 0; p < paintdropArray.length; p++) {
+        var elapsed = Date.now() - buttonPressTimeArray[p];
+        var currDrop = paintdropArray[p];
+        var height = 100.0 - gravity * Math.pow( elapsed, 2 ) * (1/1000);
+        currDrop.position.set(0, height, 0);
 
-    setTimeout( function() {requestAnimFrame(render);}, 1000/300); // 300 fps
-};
+        // if height is lower than a certain value, destroy the ball
+        if(height < -50.0 ) {
+            scene.remove(currDrop);
+            paintdropArray.splice(p, 1);
+            buttonPressTimeArray.splice(p, 1);
+
+            //uniforms.paintdropPos.value.set( 10000, 10000 );
+            //console.log(uniforms.paintdropPos.value);
+
+            updatePaint( waterMaterial );
+        }
+        if(height < 0.0) {
+            //uniforms.paintdropPos.value.set(0, 0);
+        }
+    }
+}
+
+function updatePaint( waterMaterial ) {
+    userColor = chroma.mix( userColor, addedPaint, 0.5, 'lab' );
+    waterMaterial.setHex( chromaToHex(userColor) );
+}
+
+// Parse a chroma object's hex string to a hex integer
+// because chroma.hex() returns a string
+function chromaToHex(color) {
+    return parseInt( color.hex().substring(1), 16 );
+}

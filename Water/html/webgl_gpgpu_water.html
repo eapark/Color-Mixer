@@ -31,6 +31,7 @@
 				width: 100%;
 				background-color: #000000;
 				position: absolute;
+				top: 10px;
 				z-index: 1;
 			}
 
@@ -42,12 +43,12 @@
 				z-index: 2;
 			}
 
-			#red, #green, #blue {
+			#red, #green, #blue, #white, #black {
 				width: 100px;
 				height: 100px;
 			}
 
-			#red, #green {
+			#red, #green, #blue, #white {
 				margin-right: 20px;
 			}
 
@@ -65,6 +66,7 @@
 				right: 25px;
 				bottom: 110px;
 				color: white;
+				font-size: 15px;
 				z-index: 3;
 			}
 
@@ -77,6 +79,15 @@
 				bottom: 10px;
 				border-radius: 20px;
 				z-index: 3;
+			}
+
+			#score {
+				position: absolute;
+				z-index: 3;
+				top: 10px;
+				left: 200px;
+				color: white;
+				font-size: 20px;
 			}
 
 			canvas {
@@ -96,10 +107,16 @@
 			Press mouse button to orbit around. 'W' key toggles wireframe.
 		</div> -->
 
+		<div id="score">
+			Current Score: <span id="current-score"/>
+		</div>
+
 		<div id="buckets">
-			<img src="../../images/paintbucket-red.png" alt="Red" id="red">
-			<img src="../../images/paintbucket-green.png" alt="Green" id="green">
-			<img src="../../images/paintbucket-blue.png" alt="Blue" id="blue">
+			<img src="../../images/paintbucket-red-3d.png" alt="Red" id="red">
+			<img src="../../images/paintbucket-green-3d.png" alt="Green" id="green">
+			<img src="../../images/paintbucket-blue-3d.png" alt="Blue" id="blue">
+			<img src="../../images/paintbucket-white-3d.png" alt="White" id="white">
+			<img src="../../images/paintbucket-black-3d.png" alt="Black" id="black">
 		</div>
 
 		<div id="controls">
@@ -121,6 +138,12 @@
 		<script type="text/javascript" src="./Common/chroma_min.js"></script>
 
 		<script src="../js/GPUComputationRenderer.js"></script>
+
+		<!-- This is for keeping track of the score -->
+		<script>
+			var score = 0;
+			document.getElementById("current-score").innerHTML = score;
+		</script>
 
 
 		<!-- This is the 'compute shader' for the water heightmap: -->
@@ -341,7 +364,8 @@
 				sun.position.set( 300, 400, 175 );
 				scene.add( sun );
 
-				var sun2 = new THREE.DirectionalLight( 0x40A040, 0.6 );
+				// var sun2 = new THREE.DirectionalLight( 0x40A040, 0.6 );
+				var sun2 = new THREE.DirectionalLight( 0xFFFFFF, 0.2 );
 				sun2.position.set( -100, 350, -200 );
 				scene.add( sun2 );
 
@@ -408,8 +432,8 @@
 
 			function initWater() {
 
-				var materialColor = 0x0040C0; // original blue
-				//var materialColor = 0xC00040;
+				// var materialColor = 0x0040C0; // original blue
+				var materialColor = 0xFFFFFF;
 
 				var geometry = new THREE.PlaneBufferGeometry( BOUNDS, BOUNDS, WIDTH - 1, WIDTH -1 );
 
