@@ -4,108 +4,22 @@
 		<title>Color Mixer</title>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-		<style>
-			body {
-				background-color: #000000;
-				margin: 0px;
-				overflow: hidden;
-				font-family:Monospace;
-				font-size:13px;
-				text-align:center;
-				text-align:center;
-			}
-
-			a {
-				color:#0078ff;
-			}
-
-			/*#info {
-				color: #ffffff;
-				position: absolute;
-				top: 10px;
-				width: 100%;
-			}*/
-
-			#buckets {
-				margin: auto;
-				width: 100%;
-				background-color: #000000;
-				position: absolute;
-				top: 10px;
-				z-index: 1;
-			}
-
-			#controls {
-				right: 0px;
-				top: 10px;
-				background-color: #000000;
-				position: absolute;
-				z-index: 2;
-			}
-
-			#red, #green, #blue, #white, #black {
-				width: 100px;
-				height: 100px;
-			}
-
-			#red, #green, #blue, #white {
-				margin-right: 20px;
-			}
-
-			#reset, #submit {
-				width: 75px;
-				margin-right: 10px
-			}
-
-			#reset {
-				margin-bottom: 10px;
-			}
-
-			#goal-text {
-				position: absolute;
-				right: 25px;
-				bottom: 110px;
-				color: white;
-				font-size: 15px;
-				z-index: 3;
-			}
-
-			#goal-color {
-				width: 100px;
-				height: 100px;
-				background: red;
-				position: absolute;
-				right: 10px;
-				bottom: 10px;
-				border-radius: 20px;
-				z-index: 3;
-			}
-
-			#score {
-				position: absolute;
-				z-index: 3;
-				top: 10px;
-				left: 200px;
-				color: white;
-				font-size: 20px;
-			}
-
-			canvas {
-				position: relative;
-				z-index: 0;
-			}
-
-		</style>
+		<link rel="stylesheet" href="../css/water.css">
 		<link rel="stylesheet" href="../css/bootstrap.min.css">
 	</head>
 	<body>
 
-		<!-- <div id="info">
-			<a href="http://threejs.org" target="_blank" rel="noopener">three.js</a> - <span id="waterSize"></span> webgl gpgpu water<br/>
-			Select <span id="options"></span> water size<br/>
-			Move mouse to disturb water.<br>
-			Press mouse button to orbit around. 'W' key toggles wireframe.
-		</div> -->
+		<div id="heading">
+			<span id="title">
+				Make that Color!
+			</span>
+			<span id="names">
+				created by Borah Chong and Emily Park
+			</span>
+			<span id="description">
+				Click on the paint buckets to drop paint into the white water below. Try to create the goal color and press submit!
+			</span>
+		</div>
 
 		<div id="score">
 			Current Score: <span id="current-score"/>
@@ -113,7 +27,7 @@
 
 		<div id="buckets">
 			<img src="../../images/paintbucket-red-3d.png" alt="Red" id="red">
-			<img src="../../images/paintbucket-green-3d.png" alt="Green" id="green">
+			<img src="../../images/paintbucket-yellow-3d.png" alt="Yellow" id="yellow">
 			<img src="../../images/paintbucket-blue-3d.png" alt="Blue" id="blue">
 			<img src="../../images/paintbucket-white-3d.png" alt="White" id="white">
 			<img src="../../images/paintbucket-black-3d.png" alt="Black" id="black">
@@ -166,9 +80,6 @@
 
 				vec2 uv = gl_FragCoord.xy * cellSize;
 
-				// heightmapValue.x == height
-				// heightmapValue.y == velocity
-				// heightmapValue.z, heightmapValue.w not used
 				vec4 heightmapValue = texture2D( heightmap, uv );
 
 				// Get neighbours
@@ -338,21 +249,11 @@
 			var windowHalfX = window.innerWidth / 2;
 			var windowHalfY = window.innerHeight / 2;
 
-			// document.getElementById( 'waterSize' ).innerText = WIDTH + ' x ' + WIDTH;
-
 			function change(n) {
 				location.hash = n;
 				location.reload();
 				return false;
 			}
-
-
-			// var options = '';
-			// for ( var i = 4; i < 10; i++ ) {
-			// 	var j = Math.pow( 2, i );
-			// 	options += '<a href="#" onclick="return change(' + j + ')">' + j + 'x' + j + '</a> ';
-			// }
-			// document.getElementById('options').innerHTML = options;
 
 			init();
 			animate();
@@ -364,8 +265,6 @@
 
 				camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 3000 );
 				camera.position.set( 0, 200, 350 );
-
-				//scene = new THREE.Scene();
 
 				var sun = new THREE.DirectionalLight( 0xFFFFFF, 1.0 );
 				sun.position.set( 300, 400, 175 );
@@ -381,9 +280,6 @@
 				renderer.setSize( window.innerWidth, window.innerHeight );
 				container.appendChild( renderer.domElement );
 
-				// controls = new THREE.OrbitControls( camera, renderer.domElement );
-
-
 				stats = new Stats();
 				container.appendChild( stats.dom );
 
@@ -395,16 +291,13 @@
 
 					// W Pressed: Toggle wireframe
 					if ( event.keyCode === 87 ) {
-
 						waterMesh.material.wireframe = ! waterMesh.material.wireframe;
 						waterMesh.material.needsUpdate = true;
-
 					}
 
 				} , false );
 
 				window.addEventListener( 'resize', onWindowResize, false );
-
 
 				var gui = new dat.GUI();
 
@@ -413,34 +306,16 @@
 					viscosity: 1.0
 				};
 
-				// var valuesChanger = function() {
-        //
-				// 	heightmapVariable.material.uniforms.mouseSize.value = effectController.mouseSize;
-				// 	heightmapVariable.material.uniforms.viscosityConstant.value = effectController.viscosity;
-        //
-				// };
-        //
-				// gui.add( effectController, "mouseSize", 1.0, 100.0, 1.0 ).onChange( valuesChanger );
-				// gui.add( effectController, "viscosity", 0.0, 0.1, 0.001 ).onChange( valuesChanger );
-				// var buttonSmooth = {
-				//     smoothWater: function() {
-				// 	smoothWater();
-				//     }
-				// };
-				// gui.add( buttonSmooth, 'smoothWater' );
-
-
 				initWater();
-
-				// valuesChanger();
+				getWaterMaterial(waterMesh.material.color);
 
 			}
 
 
 			function initWater() {
 
-				var materialColor = 0xffffff; // original white
-				//var materialColor = 0xC00040;
+				var materialColor = 0xffffff; // start with white water
+				//var materialColor = 0xC00040; // original blue water
 
 				var geometry = new THREE.PlaneBufferGeometry( BOUNDS, BOUNDS, WIDTH - 1, WIDTH -1 );
 
@@ -547,7 +422,7 @@
 						var x = i * 128 / WIDTH;
 						var y = j * 128 / WIDTH;
 
-					        pixels[ p + 0 ] = noise( x, y, 123.4 );
+					  pixels[ p + 0 ] = noise( x, y, 123.4 );
 						pixels[ p + 1 ] = 0;
 						pixels[ p + 2 ] = 0;
 						pixels[ p + 3 ] = 1;
@@ -608,8 +483,6 @@
 					event.preventDefault();
 
 					setMouseCoords( event.touches[ 0 ].pageX, event.touches[ 0 ].pageY );
-
-
 				}
 
 			}
@@ -619,9 +492,7 @@
 				if ( event.touches.length === 1 ) {
 
 					event.preventDefault();
-
 					setMouseCoords( event.touches[ 0 ].pageX, event.touches[ 0 ].pageY );
-
 
 				}
 
@@ -674,7 +545,5 @@
 			}
 
 		</script>
-
-		
 	</body>
 </html>
