@@ -118,7 +118,7 @@
 		<script src="../js/libs/stats.min.js"></script>
 		<script src="../js/libs/dat.gui.min.js"></script>
 		<script src="../js/SimplexNoise.js"></script>
-		<script type="text/javascript" src="./Common/chroma_min.js"></script>
+		<script type="text/javascript" src="../../Common/chroma_min.js"></script>
 
 		<script src="../js/GPUComputationRenderer.js"></script>
 
@@ -130,6 +130,8 @@
 
 			uniform vec2 mousePos;
 			uniform float mouseSize;
+			uniform vec2 paintdropPos;
+			uniform float paintdropSize;
 			uniform float viscosityConstant;
 
 			#define deltaTime ( 1.0 / 60.0 )
@@ -166,6 +168,9 @@
 				// Mouse influence
 				float mousePhase = clamp( length( ( uv - vec2( 0.5 ) ) * BOUNDS - vec2( mousePos.x, - mousePos.y ) ) * PI / mouseSize, 0.0, PI );
 				heightmapValue.x += cos( mousePhase ) + 1.0;
+
+				float dropPhase = clamp( length( ( uv - vec2( 0.5 ) ) * BOUNDS - vec2( paintdropPos.x, - paintdropPos.y ) ) * PI / paintdropSize, 0.0, PI );
+				heightmapValue.x -= cos( dropPhase ) + 1.0;
 
 				gl_FragColor = heightmapValue;
 
@@ -275,6 +280,8 @@
 
 		</script>
 
+		<script type="text/javascript" src="../../main.js"></script>
+
 		<script>
 
 			if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
@@ -291,7 +298,7 @@
 			var BOUNDS_HALF = BOUNDS * 0.5;
 
 			var container, stats;
-			var camera, scene, renderer, controls;
+			var camera, renderer, controls;
 			var mouseMoved = false;
 			var mouseCoords = new THREE.Vector2();
 			var raycaster = new THREE.Raycaster();
@@ -335,7 +342,7 @@
 				camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 3000 );
 				camera.position.set( 0, 200, 350 );
 
-				scene = new THREE.Scene();
+				//scene = new THREE.Scene();
 
 				var sun = new THREE.DirectionalLight( 0xFFFFFF, 1.0 );
 				sun.position.set( 300, 400, 175 );
@@ -408,7 +415,7 @@
 
 			function initWater() {
 
-				var materialColor = 0x0040C0; // original blue
+				var materialColor = 0xffffff; // original white
 				//var materialColor = 0xC00040;
 
 				var geometry = new THREE.PlaneBufferGeometry( BOUNDS, BOUNDS, WIDTH - 1, WIDTH -1 );
@@ -475,6 +482,9 @@
 
 				heightmapVariable.material.uniforms.mousePos = { value: new THREE.Vector2( 10000, 10000 ) };
 				heightmapVariable.material.uniforms.mouseSize = { value: 20.0 };
+
+				heightmapVariable.material.uniforms.paintdropPos = { value: new THREE.Vector2( 10000, 10000 ) };
+				heightmapVariable.material.uniforms.paintdropSize = { value: 100.0 };
 				heightmapVariable.material.uniforms.viscosityConstant = { value: 0.03 };
 				heightmapVariable.material.defines.BOUNDS = BOUNDS.toFixed( 1 );
 
@@ -615,7 +625,6 @@
 					if ( intersects.length > 0 ) {
 					    var point = intersects[ 0 ].point;
 					    uniforms.mousePos.value.set( point.x, point.z );
-
 					}
 					else {
 					    uniforms.mousePos.value.set( 10000, 10000 );
@@ -626,6 +635,8 @@
 				else {
 					uniforms.mousePos.value.set( 10000, 10000 );
 				}
+
+				updatePaintdropHeight( waterMesh.material.color, uniforms );
 
 				// Do the gpu computation
 				gpuCompute.compute();
@@ -639,5 +650,7 @@
 			}
 
 		</script>
+
+		
 	</body>
 </html>
