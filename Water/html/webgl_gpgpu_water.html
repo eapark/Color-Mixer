@@ -399,7 +399,7 @@
 
 			function fillTexture( texture ) {
 
-				var waterMaxHeight = 10;
+				var waterMaxHeight = 5;
 
 				function noise( x, y, z ) {
 					var multR = waterMaxHeight;
@@ -512,7 +512,6 @@
 				// Set uniforms: mouse interaction
 				var uniforms = heightmapVariable.material.uniforms;
 				if ( mouseMoved ) {
-
 					this.raycaster.setFromCamera( mouseCoords, camera );
 
 					var intersects = this.raycaster.intersectObject( meshRay );
@@ -522,6 +521,7 @@
 					    uniforms.mousePos.value.set( point.x, point.z );
 					}
 					else {
+						console.log("back to infinity");
 					    uniforms.mousePos.value.set( 10000, 10000 );
 					}
 

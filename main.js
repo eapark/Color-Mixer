@@ -24,6 +24,7 @@ var buttonPressTimeArray = [];
 
 var addedPaint;
 var paintdropContact = false;
+var paintdropDestroyed = false;
 
 window.onload = function init()
 {
@@ -118,6 +119,7 @@ function updatePaintdropHeight( uniforms ) {
 
         // if height is lower than a certain value, destroy the ball
         if( height < -50.0 ) {
+            console.log("destroying ball");
             scene.remove(currDrop);
             paintdropArray.splice(p, 1);
             buttonPressTimeArray.splice(p, 1);
@@ -133,18 +135,20 @@ function updatePaintdropHeight( uniforms ) {
         // Check if paintdrop touches the water, then update paintdropPos to express ripples
         if( height < 0.0 ) {
             if( !paintdropContact ) {
-                uniforms.paintdropPos.value.set( 0, 0 );
+                console.log("setting to 0");
+                uniforms.paintdropPos.value.set( 0.0, 0.0 );
                 paintdropContact = true;
             }
+            /*
             else {
                 uniforms.paintdropPos.value.set( 10000, 10000 );
-            }
+            }*/
         }
     }
 }
 
 function updatePaint() {
-    userColor = chroma.mix( userColor, addedPaint, 0.5, 'lab' );
+    userColor = chroma.mix( userColor, addedPaint, 0.2, 'lab' );
     waterMaterial.setHex( chromaToHex(userColor) );
 }
 
