@@ -383,7 +383,7 @@
 				heightmapVariable.material.uniforms.mouseSize = { value: 20.0 };
 
 				heightmapVariable.material.uniforms.paintdropPos = { value: new THREE.Vector2( 10000, 10000 ) };
-				heightmapVariable.material.uniforms.paintdropSize = { value: 100.0 };
+				heightmapVariable.material.uniforms.paintdropSize = { value: 50.0 };
 				heightmapVariable.material.uniforms.viscosityConstant = { value: 0.03 };
 				heightmapVariable.material.defines.BOUNDS = BOUNDS.toFixed( 1 );
 
@@ -531,7 +531,7 @@
 					uniforms.mousePos.value.set( 10000, 10000 );
 				}
 
-				updatePaintdropHeight( waterMesh.material.color, uniforms );
+				updatePaintdropHeight( uniforms );
 
 				// Do the gpu computation
 				gpuCompute.compute();

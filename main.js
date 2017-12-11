@@ -23,6 +23,7 @@ var paintdropArray = [];
 var buttonPressTimeArray = [];
 
 var addedPaint;
+var paintdropContact = false;
 
 window.onload = function init()
 {
@@ -96,7 +97,7 @@ function addPaintdrop(paint) {
     }
 
     // Generate a ball representing paint drop of color 'paint' and let it fall
-    var ballGeometry = new THREE.SphereGeometry(50, 30, 30);
+    var ballGeometry = new THREE.SphereGeometry(25, 30, 30);
     var ballMaterial = new THREE.MeshPhongMaterial();
     ballMaterial.color = new THREE.Color( chromaToHex(paint) );
 
@@ -116,18 +117,28 @@ function updatePaintdropHeight( uniforms ) {
         currDrop.position.set(0, height, 0);
 
         // if height is lower than a certain value, destroy the ball
-        if(height < -50.0 ) {
+        if( height < -50.0 ) {
             scene.remove(currDrop);
             paintdropArray.splice(p, 1);
             buttonPressTimeArray.splice(p, 1);
 
-            //uniforms.paintdropPos.value.set( 10000, 10000 );
-            //console.log(uniforms.paintdropPos.value);
+            uniforms.paintdropPos.value.set( 10000, 10000 );
+
+            paintdropContact = false;
 
             updatePaint();
+            continue;
         }
-        if(height < 0.0) {
-            //uniforms.paintdropPos.value.set(0, 0);
+
+        // Check if paintdrop touches the water, then update paintdropPos to express ripples
+        if( height < 0.0 ) {
+            if( !paintdropContact ) {
+                uniforms.paintdropPos.value.set( 0, 0 );
+                paintdropContact = true;
+            }
+            else {
+                uniforms.paintdropPos.value.set( 10000, 10000 );
+            }
         }
     }
 }
