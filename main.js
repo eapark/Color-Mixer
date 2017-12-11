@@ -119,7 +119,6 @@ function updatePaintdropHeight( uniforms ) {
 
         // if height is lower than a certain value, destroy the ball
         if( height < -50.0 ) {
-            console.log("destroying ball");
             scene.remove(currDrop);
             paintdropArray.splice(p, 1);
             buttonPressTimeArray.splice(p, 1);
@@ -135,14 +134,9 @@ function updatePaintdropHeight( uniforms ) {
         // Check if paintdrop touches the water, then update paintdropPos to express ripples
         if( height < 0.0 ) {
             if( !paintdropContact ) {
-                console.log("setting to 0");
                 uniforms.paintdropPos.value.set( 0.0, 0.0 );
                 paintdropContact = true;
             }
-            /*
-            else {
-                uniforms.paintdropPos.value.set( 10000, 10000 );
-            }*/
         }
     }
 }
